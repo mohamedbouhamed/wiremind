@@ -8,7 +8,7 @@ Ce dépôt résume le papier **"Orthogonal Statistical Learning"** (Foster & Syr
 
 Estimer un **paramètre cible** `θ` (ex. : effet d’un traitement, politique optimale) à partir d’un risque :
 
-L_D(θ, g)
+$L_D(\theta, g)$
 
 
 où `g₀` est un **paramètre de nuisance** (propension, régression…). On souhaite garantir que l’**excès de risque** :
