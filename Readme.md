@@ -8,67 +8,98 @@ Ce dépôt résume l'article **"Orthogonal Statistical Learning"** (Foster & Syr
 
 Estimer un **paramètre cible** $\theta$ (ex. : effet de traitement, politique optimale) à partir d'un risque de population :
 
-$$L_D(\theta, g)$$
+$$
+L_D(\theta, g)
+$$
 
-où $g_0$ est un **paramètre de nuisance** inconnu (score de propension, fonction de régression...). 
+où $g_0$ est un **paramètre de nuisance** inconnu (score de propension, fonction de régression...).
 
 **Défi :** Minimiser l'**excès de risque** suivant, même lorsque $g_0$ doit être estimé à partir des données :
 
-$$L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0)$$
+$$
+L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0)
+$$
 
 ---
 
 ## Défis principaux
 
-- **Propagation d'erreur** : Les erreurs d'estimation sur $g$ contaminent fortement l'estimation de $\theta$
-- **Complexité des modèles** : Les garanties classiques échouent avec des modèles non-paramétriques 
-- **Échantillons finis** : Les garanties asymptotiques ne sont pas suffisantes en pratique
+- **Propagation d'erreur** : Les erreurs d'estimation sur $g$ contaminent fortement l'estimation de $\theta$  
+- **Complexité des modèles** : Les garanties classiques échouent avec des estimateurs non-paramétriques  
+- **Échantillons finis** : Les garanties asymptotiques sont insuffisantes en pratique
 
 ---
 
 ## Contributions clés
 
-### 1. **Condition d'orthogonalité de Neyman**
-Découple les erreurs d'estimation sur $g$ et $\theta$ en imposant que la dérivée croisée du risque s'annule :
+### 1. Orthogonalité de Neyman
 
-$$D_g D_\theta L_D(\theta^*, g_0)[\theta - \theta^*, g - g_0] = 0$$
+Condition cruciale :
 
-**Effet :** L'erreur sur $\hat{g}$ n'a qu'un **impact d'ordre supérieur** (ex. : $\|\hat{g} - g_0\|^4$ au lieu de $\|\hat{g} - g_0\|$).
+$$
+D_g D_\theta L_D(\theta^*, g_0)[\theta - \theta^*, g - g_0] = 0
+$$
 
-### 2. **Méta-algorithme en deux étapes**
-- **Étape 1 :** Estimer $\hat{g}$ sur un sous-échantillon $S_1$
-- **Étape 2 :** Estimer $\hat{\theta}$ avec une fonction de perte orthogonale sur $S_2$
+ Cette condition découple l'erreur sur $\hat{g}$ de celle sur $\hat{\theta}$.
 
-### 3. **Taux oracle**
-Si $\hat{g}$ converge suffisamment vite (typiquement $n^{-1/4}$), alors $\hat{\theta}$ atteint les mêmes performances que si $g_0$ était parfaitement connu.
+**Effet :** L’erreur sur $\hat{g}$ a un **impact d’ordre supérieur**, typiquement :
+
+$$
+\|\hat{g} - g_0\|^4 \quad \text{au lieu de} \quad \|\hat{g} - g_0\|
+$$
 
 ---
 
-## Exemples d'application
+### 2. Méta-algorithme en deux étapes
 
-###  **Estimation d'effets de traitement hétérogènes (CATE)**
-- **Perte R-Loss :**  
-  $$\ell(\theta, g) = (Y - q(W) - \theta(X)(T - e(W)))^2$$
-- **Garantie :** Si $\|\hat{g} - g_0\| = O(n^{-1/4})$, alors taux optimal pour $\hat{\theta}$
+1. Estimer $\hat{g}$ sur un sous-échantillon $S_1$  
+2. Estimer $\hat{\theta}$ sur $S_2$ avec une perte orthogonale
 
-### **Apprentissage de politiques (Policy Learning)**
-- **Perte DR-Loss doublement robuste**
-- **Application :** Optimisation de politiques de traitement binaires $\theta(X) \in \{0,1\}$
+ Cela évite le surajustement et permet une analyse indépendante des deux étapes.
+
+---
+
+### 3. Taux oracle
+
+Si $\|\hat{g} - g_0\| = o(n^{-1/4})$, alors :
+
+$$
+L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0) = O(1/n)
+$$
+
+ On obtient les **mêmes performances** que si $g_0$ était connu.
+
+---
+
+## Exemples d’application
+
+### Estimation d'effets de traitement hétérogènes (CATE)
+
+- **Perte R-Loss** :
+  $$
+  \ell(\theta, g) = (Y - q(W) - \theta(X)(T - e(W)))^2
+  $$
+- **Résultat** : Taux optimal si $\|\hat{g} - g_0\| = O(n^{-1/4})$
+
+---
+
+### Apprentissage de politiques (Policy Learning)
+
+- **Perte DR-Loss** : doublement robuste
+- **But** : apprendre une politique binaire optimale $\theta(X) \in \{0, 1\}$
 
 ---
 
 ## Avantages
 
-- ✅ **Flexibilité algorithmique** : Compatible avec tout algorithme ML (réseaux de neurones, forêts aléatoires...)
-- ✅ **Robustesse** : Fonctionne même si le modèle est mal spécifié
-- ✅ **Applications variées** : Santé publique, économie, données manquantes, adaptation de domaine
+- **Flexible** : compatible avec n'importe quel algorithme (forêts, réseaux...)
+- **Robuste** : fonctionne même si $\theta$ est mal spécifié
+- **Domaines d’application** : santé, économie, données manquantes, adaptation de domaine...
 
 ---
 
 ## Limitations
 
-- **Division d'échantillon** requise (ou cross-fitting pour plus d'efficacité)
-- **Vérification de l'orthogonalité** nécessaire pour chaque nouvelle application
-- **Construction des pertes orthogonales** peut être non-triviale
-
-
+- Nécessite une **division d’échantillon** (ou cross-fitting)
+- La **construction d’une perte orthogonale** adaptée peut être non-triviale
+- L’**orthogonalité doit être vérifiée** pour chaque nouveau problème
