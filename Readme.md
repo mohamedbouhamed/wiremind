@@ -1,77 +1,78 @@
 # 🧠 Orthogonal Statistical Learning — Résumé synthétique
 
-Ce dépôt résume le papier **"Orthogonal Statistical Learning"** (Foster & Syrgkanis), qui traite de l'estimation de paramètres causaux dans des contextes où la fonction de risque dépend de **paramètres de nuisance** inconnus.
+Ce dépôt résume l'article **"Orthogonal Statistical Learning"** (Foster & Syrgkanis), qui traite de l'estimation robuste de paramètres causaux en présence de **paramètres de nuisance** inconnus.
 
 ---
 
 ## 🎯 Objectif
 
-Estimer un **paramètre cible** `θ` (ex. : effet d’un traitement, politique optimale) à partir d’un risque :
+Estimer un **paramètre cible** $\theta$ (ex. : effet de traitement, politique optimale) à partir d'un risque de population :
 
-$L_D(\theta, g)$
+$$L_D(\theta, g)$$
 
+où $g_0$ est un **paramètre de nuisance** inconnu (score de propension, fonction de régression...). 
 
-où `g₀` est un **paramètre de nuisance** (propension, régression…). On souhaite garantir que l’**excès de risque** :
+**Défi :** Minimiser l'**excès de risque** suivant, même lorsque $g_0$ doit être estimé à partir des données :
 
-L_D(θ̂, g₀) − L_D(θ*, g₀)
-
-
-reste faible, même si `g₀` est estimé à partir des données et donc imparfait.
+$$L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0)$$
 
 ---
 
-## ⚠️ Défis
+## ⚠️ Défis principaux
 
-- **Erreur sur g** : contamine fortement θ̂ si mal estimé.
-- **Modèles complexes** : les garanties classiques échouent avec des modèles non-paramétriques.
-- **Robustesse** : les garanties asymptotiques ne tiennent pas en échantillons finis.
+- **Propagation d'erreur** : Les erreurs d'estimation sur $g$ contaminent fortement l'estimation de $\theta$
+- **Complexité des modèles** : Les garanties classiques échouent avec des modèles non-paramétriques 
+- **Échantillons finis** : Les garanties asymptotiques ne sont pas suffisantes en pratique
 
 ---
 
-## ✅ Contributions
+## ✅ Contributions clés
 
-### 1. **Orthogonalité de Neyman**
-Permet de découpler les erreurs sur `g` et `θ`.  
-Effet : l’erreur sur `ĝ` a un **impact d’ordre supérieur** (ex. ∥ĝ−g₀∥⁴).
+### 1. **Condition d'orthogonalité de Neyman**
+Découple les erreurs d'estimation sur $g$ et $\theta$ en imposant que la dérivée croisée du risque s'annule :
 
-### 2. **Méthode en deux étapes**
-- Étape 1 : estimer `ĝ` sur un sous-échantillon.
-- Étape 2 : estimer `θ̂` avec une perte orthogonale sur l’autre moitié.
+$$D_g D_\theta L_D(\theta^*, g_0)[\theta - \theta^*, g - g_0] = 0$$
+
+**Effet :** L'erreur sur $\hat{g}$ n'a qu'un **impact d'ordre supérieur** (ex. : $\|\hat{g} - g_0\|^4$ au lieu de $\|\hat{g} - g_0\|$).
+
+### 2. **Méta-algorithme en deux étapes**
+- **Étape 1 :** Estimer $\hat{g}$ sur un sous-échantillon $S_1$
+- **Étape 2 :** Estimer $\hat{\theta}$ avec une fonction de perte orthogonale sur $S_2$
 
 ### 3. **Taux oracle**
-Si `ĝ` est assez précis, `θ̂` atteint les mêmes performances que si `g₀` était connu.
+Si $\hat{g}$ converge suffisamment vite (typiquement $n^{-1/4}$), alors $\hat{\theta}$ atteint les mêmes performances que si $g_0$ était parfaitement connu.
 
 ---
 
-## 📚 Exemples
+## 📚 Exemples d'application
 
-### ▶️ Estimation d’effet de traitement (CATE)
-- Perte : **R-Loss**  
-ℓ(θ, g) = (Y − q(W) − θ(X)(T − e(W)))²  
-→ Si ∥ĝ−g₀∥ = o(n⁻¹/⁴), alors taux optimal sur θ̂.
+### ▶️ **Estimation d'effets de traitement hétérogènes (CATE)**
+- **Perte R-Loss :**  
+  $$\ell(\theta, g) = (Y - q(W) - \theta(X)(T - e(W)))^2$$
+- **Garantie :** Si $\|\hat{g} - g_0\| = O(n^{-1/4})$, alors taux optimal pour $\hat{\theta}$
 
-### ▶️ Apprentissage de politiques
-- Perte : **DR-Loss**  
-Permet d’optimiser une politique binaire θ(X) ∈ {0,1} malgré les biais.
-
----
-
-## 💡 Atouts
-
-- Fonctionne avec **tout algorithme ML** (réseaux, forêts…)
-- Valide même si le modèle est mal spécifié
-- Applications : santé, économie, données manquantes, etc.
+### ▶️ **Apprentissage de politiques (Policy Learning)**
+- **Perte DR-Loss doublement robuste**
+- **Application :** Optimisation de politiques de traitement binaires $\theta(X) \in \{0,1\}$
 
 ---
 
-## ⚠️ Limites
+## 💡 Avantages
 
-- Requiert un **split d’échantillon** (ou cross-fitting)
-- L’**orthogonalité** doit être vérifiée pour chaque tâche
+- ✅ **Flexibilité algorithmique** : Compatible avec tout algorithme ML (réseaux de neurones, forêts aléatoires...)
+- ✅ **Robustesse** : Fonctionne même si le modèle est mal spécifié
+- ✅ **Applications variées** : Santé publique, économie, données manquantes, adaptation de domaine
+
+---
+
+## ⚠️ Limitations
+
+- **Division d'échantillon** requise (ou cross-fitting pour plus d'efficacité)
+- **Vérification de l'orthogonalité** nécessaire pour chaque nouvelle application
+- **Construction des pertes orthogonales** peut être non-triviale
 
 ---
 
 ## 📄 Référence
 
 Foster, D. & Syrgkanis, V. (2023). *Orthogonal Statistical Learning*. [arXiv:1901.09036](https://arxiv.org/abs/1901.09036)
-
