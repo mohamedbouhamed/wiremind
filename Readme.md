@@ -1,10 +1,10 @@
-# 🧠 Orthogonal Statistical Learning — Résumé synthétique
+# Orthogonal Statistical Learning — Résumé synthétique
 
 Ce dépôt résume l'article **"Orthogonal Statistical Learning"** (Foster & Syrgkanis), qui traite de l'estimation robuste de paramètres causaux en présence de **paramètres de nuisance** inconnus.
 
 ---
 
-## 🎯 Objectif
+## Objectif
 
 Estimer un **paramètre cible** $\theta$ (ex. : effet de traitement, politique optimale) à partir d'un risque de population :
 
@@ -18,7 +18,7 @@ $$L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0)$$
 
 ---
 
-## ⚠️ Défis principaux
+## Défis principaux
 
 - **Propagation d'erreur** : Les erreurs d'estimation sur $g$ contaminent fortement l'estimation de $\theta$
 - **Complexité des modèles** : Les garanties classiques échouent avec des modèles non-paramétriques 
@@ -26,7 +26,7 @@ $$L_D(\hat{\theta}, g_0) - L_D(\theta^*, g_0)$$
 
 ---
 
-## ✅ Contributions clés
+## Contributions clés
 
 ### 1. **Condition d'orthogonalité de Neyman**
 Découple les erreurs d'estimation sur $g$ et $\theta$ en imposant que la dérivée croisée du risque s'annule :
@@ -44,20 +44,20 @@ Si $\hat{g}$ converge suffisamment vite (typiquement $n^{-1/4}$), alors $\hat{\t
 
 ---
 
-## 📚 Exemples d'application
+## Exemples d'application
 
-### ▶️ **Estimation d'effets de traitement hétérogènes (CATE)**
+###  **Estimation d'effets de traitement hétérogènes (CATE)**
 - **Perte R-Loss :**  
   $$\ell(\theta, g) = (Y - q(W) - \theta(X)(T - e(W)))^2$$
 - **Garantie :** Si $\|\hat{g} - g_0\| = O(n^{-1/4})$, alors taux optimal pour $\hat{\theta}$
 
-### ▶️ **Apprentissage de politiques (Policy Learning)**
+### **Apprentissage de politiques (Policy Learning)**
 - **Perte DR-Loss doublement robuste**
 - **Application :** Optimisation de politiques de traitement binaires $\theta(X) \in \{0,1\}$
 
 ---
 
-## 💡 Avantages
+## Avantages
 
 - ✅ **Flexibilité algorithmique** : Compatible avec tout algorithme ML (réseaux de neurones, forêts aléatoires...)
 - ✅ **Robustesse** : Fonctionne même si le modèle est mal spécifié
@@ -65,14 +65,10 @@ Si $\hat{g}$ converge suffisamment vite (typiquement $n^{-1/4}$), alors $\hat{\t
 
 ---
 
-## ⚠️ Limitations
+## Limitations
 
 - **Division d'échantillon** requise (ou cross-fitting pour plus d'efficacité)
 - **Vérification de l'orthogonalité** nécessaire pour chaque nouvelle application
 - **Construction des pertes orthogonales** peut être non-triviale
 
----
 
-## 📄 Référence
-
-Foster, D. & Syrgkanis, V. (2023). *Orthogonal Statistical Learning*. [arXiv:1901.09036](https://arxiv.org/abs/1901.09036)
